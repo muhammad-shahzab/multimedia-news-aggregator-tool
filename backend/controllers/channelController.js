@@ -13,34 +13,41 @@ export const getAllChannels = async (req, res) => {
 };
 
 import { Article } from "../models/Article.js";
+import {shuffleAndDeduplicateArticles} from "../services/utils/shuffleAndDeduplicate.js";
 
 
 
-
-// ✅ Get all articles for a specific channel
+//  Get paginated articles for a specific channel
 export const getArticlesByChannel = async (req, res) => {
   try {
     const { channelName } = req.params;
-console.log("Fetching articles for channel:", channelName);
+   
+    console.log("Fetching articles for channel:", channelName);
+
     // Find channel by name
     const channel = await Channel.findOne({ name: channelName });
     if (!channel) {
       return res.status(404).json({ message: "Channel not found" });
     }
 
-    // Find all articles for that channel ID
-    const articles = await Article.find({ channel: channel.name });
+    // Count total articles
+    const totalArticles = await Article.countDocuments({ channel: channel.name });
 
-    if (articles.length === 0) {
+    const articles = await Article.find({ channel: channel.name }).sort({ publishedAt: -1 }) // latest first
+
+    if (!articles.length) {
       return res.status(404).json({ message: "No articles found for this channel" });
     }
+    const uniqueArticles=shuffleAndDeduplicateArticles(articles);
 
-    res.status(200).json(articles);
+    res.status(200).json({
+      totalArticles,
+      data: uniqueArticles,
+    });
+
     console.log(`Fetched ${articles.length} articles for channel: ${channelName}`);
   } catch (error) {
     console.error("Error fetching articles by channel:", error);
     res.status(500).json({ message: "Server error while fetching articles" });
   }
 };
-
-

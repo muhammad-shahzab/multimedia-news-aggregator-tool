@@ -7,7 +7,9 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { useState, useEffect } from "react";
+import { Close, Star, StarBorder } from "@mui/icons-material";
+import { userAPI } from "../../services/api";
 import styles from "./css/Sidebar.module.css";
 
 const Sidebar = ({
@@ -16,10 +18,53 @@ const Sidebar = ({
   selectedCategory,
   setSelectedCategory,
   categories,
+  onCategoryChange,
 }) => {
-  const handleSelect = (categoryId) => {
-    setSelectedCategory(categoryId);
+
+
+  const [favTopics, setFavTopics] = useState({});
+
+  // On mount, check favorite status for all categories
+  useEffect(() => {
+    categories.forEach(async (category) => {
+      try {
+        const { data } = await userAPI.checkFavTopic(category.label);
+        setFavTopics((prev) => ({ ...prev, [category.label]: data.fav }));
+      } catch (err) {
+        console.error("❌ Error checking topic:", err);
+      }
+    });
+  }, [categories]);
+
+  const handleSelect = (categoryName) => {
+    setSelectedCategory(categoryName);
     setDrawerOpen(false);
+
+    if (onCategoryChange) {
+      onCategoryChange(categoryName);
+    }
+  };
+
+  const toggleFollow = async (categoryName) => {
+    // Optimistic update
+    setFavTopics((prev) => ({
+      ...prev,
+      [categoryName]: !prev[categoryName],
+    }));
+
+    try {
+      const { data } = await userAPI.toggleFavTopic(categoryName);
+      if (data && typeof data.fav === "boolean") {
+        setFavTopics((prev) => ({ ...prev, [categoryName]: data.fav }));
+      }
+    } catch (err) {
+      console.error("❌ Error toggling topic:", err);
+      // revert on error
+      setFavTopics((prev) => ({
+        ...prev,
+        [categoryName]: !prev[categoryName],
+      }));
+    }
   };
 
   return (
@@ -47,18 +92,29 @@ const Sidebar = ({
               <ListItem
                 key={category.id}
                 button
-                onClick={() => handleSelect(category.id)}
-                className={`${styles.sidebarListItem} ${
-                  selectedCategory === category.id ? styles.activeListItem : ""
-                }`}
-              >
-                <ListItemIcon
-                  className={`${styles.sidebarListIcon} ${
-                    selectedCategory === category.id ? styles.activeIcon : ""
+                onClick={() => handleSelect(category.label)}
+                className={`${styles.sidebarListItem} ${selectedCategory === category.label ? styles.activeListItem : ""
                   }`}
-                >
-                  {category.icon}
-                </ListItemIcon>
+              >
+                {category.icon ? (
+                  <ListItemIcon
+                    className={`${styles.sidebarListIcon} ${selectedCategory === category.label ? styles.activeIcon : ""
+                      }`}
+                  >
+                    {category.icon}
+                  </ListItemIcon>
+                ) : (
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent triggering select
+                      toggleFollow(category.label);
+                    }}
+                  >
+                    {favTopics[category.label] ? <Star /> : <StarBorder />}
+                  </IconButton>
+                )}
+
                 <ListItemText primary={category.label} />
               </ListItem>
             ))}
@@ -79,18 +135,29 @@ const Sidebar = ({
                 <ListItem
                   key={category.id}
                   button
-                  onClick={() => handleSelect(category.id)}
-                  className={`${styles.sidebarListItem} ${
-                    selectedCategory === category.id ? styles.activeListItem : ""
-                  }`}
-                >
-                  <ListItemIcon
-                    className={`${styles.sidebarListIcon} ${
-                      selectedCategory === category.id ? styles.activeIcon : ""
+                  onClick={() => handleSelect(category.label)}
+                  className={`${styles.sidebarListItem} ${selectedCategory === category.label ? styles.activeListItem : ""
                     }`}
-                  >
-                    {category.icon}
-                  </ListItemIcon>
+                >
+                  {category.icon ? (
+                    <ListItemIcon
+                      className={`${styles.sidebarListIcon} ${selectedCategory === category.label ? styles.activeIcon : ""
+                        }`}
+                    >
+                      {category.icon}
+                    </ListItemIcon>
+                  ) : (
+                    <IconButton
+                      size="medium"
+                      onClick={(e) => {
+                        e.stopPropagation(); // prevent triggering select
+                        toggleFollow(category.label);
+                      }}
+                    >
+                      {favTopics[category.label] ? <Star /> : <StarBorder />}
+                    </IconButton>
+                  )}
+
                   <ListItemText primary={category.label} />
                 </ListItem>
               ))}

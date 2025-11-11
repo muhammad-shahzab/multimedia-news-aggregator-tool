@@ -42,6 +42,7 @@ const NewsPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [loadingArticles, setLoadingArticles] = useState(false);
 
   const defaultCategories = [
     { id: "for-you", label: "For You", icon: <AccountCircle /> },
@@ -63,24 +64,20 @@ const NewsPage = () => {
       .finally(() => setLoading(false));
   }, []);
 
+
   // ──────────────────────────────────────────────
-  // Unified News Fetcher (Tab + Channel Mode)
+  // Dedicated Tab Fetch Function
   // ──────────────────────────────────────────────
-  const fetchNews = async (mode, value, pageNum = 1) => {
+  const fetchTabArticles = async (tabName, pageNum = 1) => {
     try {
       setLoading(true);
       let response;
+      console.log(`🧭 Fetching tab news: ${tabName} (page ${pageNum})`);
+      response = await newsAPI.fetchArticlesByTab(tabName, pageNum);
 
-      if (mode === "CHANNEL_MODE") {
-        console.log(`🌍 Fetching channel news: ${value} (page ${pageNum})`);
-        response = await newsAPI.fetchArticlesByChannel(value, pageNum);
-      } else {
-        console.log(`🧭 Fetching tab news: ${value} (page ${pageNum})`);
-        response = await newsAPI.fetchArticlesByTab(value, pageNum);
-      }
+      if (pageNum === 1) setArticles(response.data.data || []);
+      else setArticles((prev) => [...prev, ...(response.data.data || [])]);
 
-      if (pageNum === 1) setArticles(response.data || []);
-      else setArticles((prev) => [...prev, ...(response.data || [])]);
     } catch (err) {
       console.error("❌ Error fetching news:", err);
       setError("Failed to fetch news");
@@ -90,33 +87,39 @@ const NewsPage = () => {
   };
 
   // ──────────────────────────────────────────────
-  // Dedicated Tab Fetch Function
-  // ──────────────────────────────────────────────
-  const fetchTabArticles = async (tabName, pageNum = 1) => {
-    await fetchNews("TAB_MODE", tabName, pageNum);
-  };
-
-  // ──────────────────────────────────────────────
   // Dedicated Channel Fetch Function
   // ──────────────────────────────────────────────
-  const fetchChannelArticles = async (channelName, pageNum = 1) => {
-    await fetchNews("CHANNEL_MODE", channelName, pageNum);
+  const fetchChannelArticles = async (channelName) => {
+    setLoadingArticles(true)
+    try {
+      let response;
+      setArticles([]);
+      console.log(`🌍 Fetching channel news: ${channelName}`);
+      response = await channelsAPI.fetchNewsByChannel(channelName);
+      setArticles(response.data.data || []);
+      console.log("Articles after fetch:", articles);
+    } catch (err) {
+      console.error("❌ Error fetching news:", err);
+      setError("Failed to fetch news");
+    } finally {
+      setLoadingArticles(false);
+    }
   };
 
   // ──────────────────────────────────────────────
   // Pagination
   // ──────────────────────────────────────────────
   const fetchMoreArticles = async () => {
-    try {
-      const nextPage = page + 1;
-      if (selectedChannel)
-        await fetchChannelArticles(selectedChannel.name, nextPage);
-      else await fetchTabArticles(activeTab, nextPage);
+    // try {
+    //   const nextPage = page + 1;
+    //   if (selectedChannel)
+    //     await fetchChannelArticles(selectedChannel.name, nextPage);
+    //   else await fetchTabArticles(activeTab, nextPage);
 
-      setPage(nextPage);
-    } catch (err) {
-      console.error("❌ Error loading more:", err);
-    }
+    //   setPage(nextPage);
+    // } catch (err) {
+    //   console.error("❌ Error loading more:", err);
+    // }
   };
 
   // ──────────────────────────────────────────────
@@ -126,16 +129,22 @@ const NewsPage = () => {
     console.log("Parent knows selected channel:", channelName);
     setSelectedChannel(channelName); // optional: store in state
     setActiveTab(null); // exit tab mode when a channel is selected
-       setSelectedCategory(null); 
-       processChannelCategories(channelName);
-       console.log("Processed categories for channel:", channelName);
-       console.log("Categories set to:", categories);
-    // fetchChannelArticles(channelName, 1); // fetch articles for the selected channel
+    setSelectedCategory(null);
+     processChannelCategories(channelName);
+   
+    console.log("Processed categories for channel:", channelName);
+    console.log("Categories set to:", categories);
+
+    fetchChannelArticles(channelName);
   };
+
   const handleTabChangeFromFeed = async (tabName) => {
     console.log("Parent knows active tab:", tabName);
     setActiveTab(tabName);
     setSelectedChannel(null); // exit channel mode
+    setCategories([...defaultCategories]);
+    setSelectedCategory(null); // Reset selected category
+
     setPage(1);
     // await fetchTabArticles(tabName, 1); // fetch articles for the tab
   };
@@ -146,27 +155,29 @@ const NewsPage = () => {
   // ──────────────────────────────────────────────
   // Channel & Category Utilities
   // ──────────────────────────────────────────────
-const processChannelCategories = (channelName) => {
-  console.log("All channels:", channels);
+  const processChannelCategories = (channelName) => {
+    console.log("All channels:", channels);
 
-  // Find the channel object by name
-  const channel = channels.find((c) => c.name === channelName);
+    // Find the channel object by name
+    const channel = channels.find((c) => c.name === channelName);
 
-  if (!channel || !channel.categories?.length) {
-    setCategories([...defaultCategories]); 
-    setSelectedCategory(null); // Reset selected category
-    return;
-  }
+    if (!channel || !channel.categories?.length) {
+      setCategories(null);
+      setCategories([...defaultCategories]);
+      setSelectedCategory(null); // Reset selected category
+      return;
+    }
 
-  const mapped = channel.categories.map((cat) => ({
-    id: cat.slug || cat.name.toLowerCase().replace(/\s+/g, "-"),
-    label: cat.name,
-  }));
+    const mapped = channel.categories.map((cat) => ({
+      id: cat.slug || cat.name.toLowerCase().replace(/\s+/g, "-"),
+      label: cat.name,
+    }));
+    setCategories(null);
+    setCategories([...mapped]); // set new categories
+    return mapped;
+  };
 
-  setCategories([...mapped]); // set new categories
-};
-
-// fetch all channels
+  // fetch all channels
   const fetchChannels = async () => {
     try {
       const { data } = await channelsAPI.fetchChannels();
@@ -175,10 +186,6 @@ const processChannelCategories = (channelName) => {
       console.error("❌ Error fetching channels:", err);
     }
   };
-
-
-
-
 
   const fetchBookmarks = async () => {
     try {
@@ -256,6 +263,7 @@ const processChannelCategories = (channelName) => {
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
             categories={categories.length ? categories : defaultCategories}
+            onCategoryChange={(category) => console.log("Selected category:", category)}
           />
         </aside>
 
@@ -267,19 +275,19 @@ const processChannelCategories = (channelName) => {
               </div>
             }
           >
-            {!loading && (
+            
               <NewsFeed
                 selectedCategory={selectedCategory}
                 newsArticles={articles}
+                loading={loadingArticles}
                 bookmarkedArticles={bookmarkedArticles}
                 handleBookmark={handleBookmark}
                 handleReadArticle={handleReadArticle}
                 formatTimeAgo={formatTimeAgo}
-                fetchMoreArticles={fetchMoreArticles}
-                onTabChange={handleTabChangeFromFeed} 
+                onTabChange={handleTabChangeFromFeed}
                 onChannelChange={handleSelectedChannelChange}
               />
-            )}
+           
           </Suspense>
         </main>
       </div>

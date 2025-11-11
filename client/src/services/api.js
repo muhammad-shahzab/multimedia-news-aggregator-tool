@@ -62,8 +62,7 @@ export const newsAPI = {
 // ──────────────────────────────────────────────
 export const channelsAPI = {
   fetchChannels: () => api.get("/channels"),
-  fetchNewsByChannel: (channelName, page = 1) =>
-    api.get(`/channels/channel/${encodeURIComponent(channelName)}?page=${page}`),
+ fetchNewsByChannel: (channelName) =>api.get(`/channels/channel/${channelName}`),
 };
 
 // ──────────────────────────────────────────────

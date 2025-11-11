@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -18,12 +18,12 @@ import NewsNavbar from "../NewsBar/NewsNavBar";
 const NewsFeed = ({
   selectedCategory,
   newsArticles,
+  loading,
   bookmarkedArticles,
   handleBookmark,
   handleReadArticle,
   formatTimeAgo,
-  fetchMoreArticles,
-   onTabChange,     // ✅ parent callback for tab
+  onTabChange,     // ✅ parent callback for tab
   onChannelChange,
 }) => {
   const theme = useTheme();
@@ -38,8 +38,7 @@ const NewsFeed = ({
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [isFollowingChannel, setIsFollowingChannel] = useState(false);
 
-  const [visibleArticles, setVisibleArticles] = useState(30);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [visibleList, setVisibleList] = useState(newsArticles);
 
   // ──────────────────────────────
   // Handlers
@@ -68,7 +67,7 @@ const NewsFeed = ({
             : `👀 ${channelName} is not followed`
         );
       } else {
-        console.error("❌ Invalid response grfrom backend:", data);
+        console.error("❌ Invalid response from backend:", data);
       }
     } catch (err) {
       console.error("❌ Error checking follow status:", err);
@@ -78,25 +77,15 @@ const NewsFeed = ({
   // === Toggle Follow / Unfollow Channel ===
   const handleFollowChannel = async () => {
     if (!selectedChannel) return;
-
     try {
-      // Optimistic UI update
       setIsFollowingChannel((prev) => !prev);
-
       const { data } = await userAPI.toggleFavChannel(selectedChannel);
-
       if (data && typeof data.fav === "boolean") {
         setIsFollowingChannel(data.fav);
-        console.log(
-          data.fav
-            ? `⭐ Now following ${selectedChannel}`
-            : `🚫 Unfollowed ${selectedChannel}`
-        );
       } else {
         console.error("❌ Invalid response from backend:", data);
       }
     } catch (err) {
-      console.error("❌ Error toggling follow status:", err);
       // revert UI if error
       setIsFollowingChannel((prev) => !prev);
     }
@@ -106,21 +95,46 @@ const NewsFeed = ({
   const handleTabChange = (tab) => {
     setSelectedChannel(null);
     setActiveTab(tab);
-     if (onTabChange) onTabChange(tab);
+    if (onTabChange) onTabChange(tab);
   };
 
+  // ──────────────────────────────
+  // filters for articles
+  // ──────────────────────────────
+  useEffect(() => {
+    if (!newsArticles) return;
+    // Take the first 50 articles as a temporary subset
+    const initialArticles = newsArticles.slice(0, 50);
+    setVisibleList(initialArticles);
+
+  }, [newsArticles])
+
+  useEffect(() => {
+    if (!newsArticles) return;
+
+    const filteredArticles = selectedCategory
+      ? newsArticles.filter(
+        (article) =>
+          article.category.toLowerCase() === selectedCategory.toLowerCase()
+      )
+      : newsArticles;
+
+    setVisibleList(filteredArticles);
+  }, [selectedCategory, newsArticles]);
+
+
   // === Pagination ===
-  const handleLoadMore = async () => {
-    setLoadingMore(true);
-    try {
-      await fetchMoreArticles();
-      setVisibleArticles((prev) => prev + 30);
-    } catch (err) {
-      console.error("Error loading more articles:", err);
-    } finally {
-      setLoadingMore(false);
-    }
-  };
+  // const handleLoadMore = async () => {
+  //   setLoadingMore(true);
+  //   try {
+  //     await fetchMoreArticles();
+  //     setVisibleArticles((prev) => prev + 30);
+  //   } catch (err) {
+  //     console.error("Error loading more articles:", err);
+  //   } finally {
+  //     setLoadingMore(false);
+  //   }
+  // };
 
   // ──────────────────────────────
   // Derived UI Logic
@@ -129,7 +143,7 @@ const NewsFeed = ({
   const shouldShowArticles =
     activeFilter === "Articles" || activeFilter === "All";
 
-  const visibleList = newsArticles.slice(0, visibleArticles);
+
 
   // ──────────────────────────────
   // JSX Rendering
@@ -196,48 +210,62 @@ const NewsFeed = ({
         </Box>
       </Box>
 
-      {shouldShowVideos && !shouldShowArticles ? (
-        <YouTubeFeed category={selectedCategory} />
+
+      {loading ? (
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
+          <CircularProgress />
+        </Box>
       ) : (
         <>
-          {shouldShowVideos && (
-            <Box mb={4}>
-              <Typography variant="h6" mb={2}>
-                Video Highlights
-              </Typography>
-              <YouTubeFeed category={selectedCategory} />
-            </Box>
+          {shouldShowVideos && !shouldShowArticles ? (
+            <YouTubeFeed category={selectedCategory} />
+          ) : (
+            <>
+              {shouldShowVideos && (
+                <Box mb={4}>
+                  <Typography variant="h6" mb={2}>
+                    Video Highlights
+                  </Typography>
+                  <YouTubeFeed category={selectedCategory} />
+                </Box>
+              )}
+
+              {shouldShowArticles && (
+                <div className={styles.feedWrapper}>
+                  {visibleList.length == null ? (
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      textAlign="center"
+                      mt={4}
+                    >
+                      No articles available for this selection.
+                    </Typography>
+                  ) : (
+                    visibleList.map((article) => (
+                      <ArticleCard
+                        key={article._id || article.id}
+                        article={article}
+                        bookmarkedArticles={bookmarkedArticles}
+                        handleBookmark={handleBookmark}
+                        handleReadArticle={handleReadArticle}
+                        formatTimeAgo={formatTimeAgo}
+                      />
+                    ))
+                  )}
+                </div>
+              )}
+            </>
           )}
 
-          {shouldShowArticles && (
-            <div className={styles.feedWrapper}>
-              {visibleList.length === 0 ? (
-                <Typography
-                  variant="body1"
-                  color="text.secondary"
-                  textAlign="center"
-                  mt={4}
-                >
-                  No articles available for this selection.
-                </Typography>
-              ) : (
-                visibleList.map((article) => (
-                  <ArticleCard
-                    key={article._id || article.id}
-                    article={article}
-                    bookmarkedArticles={bookmarkedArticles}
-                    handleBookmark={handleBookmark}
-                    handleReadArticle={handleReadArticle}
-                    formatTimeAgo={formatTimeAgo}
-                  />
-                ))
-              )}
-            </div>
-          )}
+
         </>
       )}
 
-      {newsArticles.length > visibleArticles && (
+
+
+
+      {/* {newsArticles.length > visibleArticles && (
         <Box mt={4} display="flex" justifyContent="center">
           <Button
             variant="outlined"
@@ -254,7 +282,7 @@ const NewsFeed = ({
             {loadingMore ? <CircularProgress size={24} /> : "Load More Articles"}
           </Button>
         </Box>
-      )}
+      )} */}
     </Box>
   );
 };
