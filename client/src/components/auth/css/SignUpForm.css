@@ -1,0 +1,89 @@
+/* Container */
+.signup-form {
+  padding: 2.5rem 2rem;
+  max-width: 700px;
+  margin: 0 auto;
+   background-color: var(--color-bg-accent);
+   border-radius: 12px;
+  box-shadow: 0 6px 16px var(--color-shadow);
+  gap: 1rem;
+
+}
+
+.signup-title {
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  font-size: 1.75rem;
+  color: var(--color-text-primary);
+}
+
+.signup-subtitle {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.signup-input {
+  margin-bottom: 1.25rem;
+  
+}
+
+.signup-icon {
+  color: var(--color-text-muted);
+}
+
+.signup-interests {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-bg-accent);
+}
+
+.signup-interests-label {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: block;
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+}
+
+.signup-interests-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.signup-interest-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+}
+
+/* Country Selector */
+.MuiFormControl-root.signup-input {
+  margin-bottom: 1.5rem;
+}
+
+/* Button */
+.signup-button {
+  background-color: var(--color-primary) !important;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  padding: 0.9rem !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  text-transform: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.signup-button:hover {
+  background-color: var(--color-primary-hover) !important;
+  box-shadow: 0 6px 10px rgba(29, 78, 216, 0.25);
+}

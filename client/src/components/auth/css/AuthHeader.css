@@ -1,0 +1,34 @@
+.auth-header {
+  text-align: center;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auth-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-header-logo-img {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+.auth-header-title {
+  font-weight: 700;
+  color:white;
+  line-height: 1;
+}
+
+.auth-header-subtitle {
+  color:white;
+  font-weight: 400;
+  font-size: medium;
+}

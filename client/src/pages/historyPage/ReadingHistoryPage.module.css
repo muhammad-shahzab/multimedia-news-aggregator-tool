@@ -1,0 +1,166 @@
+/* ========================================
+   ROOT & PAGE
+   ======================================== */
+.pageContainer {
+  min-height: 100vh;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.header {
+  background-color: var(--color-bg-secondary) !important;
+  box-shadow: var(--color-shadow-sm) !important;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.toolbar { min-height: 64px; padding: 0 1rem; }
+.backButton { color: var(--color-text-primary); }
+.headerContent { display: flex; align-items: center; gap: 0.75rem; }
+.iconContainer { background-color: var(--color-primary) !important; width: 40px; height: 40px; }
+.headerTitle { font-weight: 700 !important; color: var(--color-text-primary) !important; }
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.errorAlert {
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--color-error-light);
+}
+
+/* Stats */
+.statsSection { margin-bottom: 2rem; }
+.statsTitle { font-weight: 700; color: var(--color-text-primary); margin-bottom: 0.5rem; }
+.statsText { color: var(--color-text-secondary); margin-bottom: 1.5rem; }
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .statsGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.statCard {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  text-align: center;
+}
+.statCardContent { padding: 1.25rem; }
+.statValue { font-weight: 700; font-size: 2rem; }
+.statValueGreen { color: var(--color-success); }
+.statValuePurple { color: var(--color-accent); }
+.statLabel { color: var(--color-text-secondary); }
+
+/* Search */
+.searchCard {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+.searchCardContent { padding: 1rem; }
+.searchField { flex: 1; }
+
+/* Tabs */
+.tabsCard {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+.tabContainer { border-bottom: 1px solid var(--color-border); }
+
+/* Empty State */
+.emptyCard {
+  background-color: var(--color-bg-secondary);
+  border: 1px dashed var(--color-border);
+  border-radius: 12px;
+  text-align: center;
+}
+.emptyCardContent { padding: 3rem; }
+.emptyIcon { color: var(--color-text-muted); font-size: 4rem; margin-bottom: 1rem; }
+.emptyTitle { color: var(--color-text-secondary); }
+.emptyText { color: var(--color-text-muted); }
+
+/* History List */
+.historyList { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.historyCard {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+.historyCard:hover {
+  box-shadow: var(--color-shadow-lg);
+  transform: translateY(-1px);
+}
+.historyCardContent { padding: 1.25rem; }
+
+.historyContent { display: flex; gap: 1rem; }
+.articleDetails { flex: 1; }
+
+.articleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+.chipContainer { display: flex; gap: 0.5rem; align-items: center; }
+
+.articleTitle {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.articleTitle:hover { color: var(--color-primary); text-decoration: underline; }
+
+.progressSection { margin-bottom: 1rem; }
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+.progressLabel, .progressValue {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+.progressBar { height: 8px; border-radius: 4px; }
+
+.articleMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+.metaLeft { display: flex; align-items: center; gap: 0.75rem; }
+.readTime { display: flex; align-items: center; gap: 0.25rem; }
+.readTimeText { font-style: italic; }
+
+/* Loading */
+.loadingContainer, .loadingHistoryContainer {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+}

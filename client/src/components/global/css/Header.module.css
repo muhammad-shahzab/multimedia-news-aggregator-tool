@@ -1,0 +1,69 @@
+/* .appbar {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  box-shadow: 0 2px 4px var(--color-shadow);
+  z-index: 1201;
+  padding-left: 4%;
+  padding-right: 4%;
+  border-radius: 30px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 0 2rem;
+}
+
+.logoText {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--color-text-primary);
+}
+
+.searchContainer {
+  flex: 1;
+  max-width: 700px;
+  margin: 0 16px;
+}
+
+.searchIcon {
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  background-color: var(--color-primary);
+  color: #fff;
+  font-weight: bold;
+}
+
+.menuItemText {
+  margin-left: 8px;
+  color: var(--color-text-primary);
+}
+
+.logoutIcon {
+  margin-right: 8px;
+  color: var(--color-text-primary);
+}
+
+.menuIcon {
+  margin-right: 12px;
+  color: var(--color-text-primary);
+  display: block;              
+}
+
+.Bookmarkicon {
+  color: var(--color-text-primary);
+}
+
+@media (min-width: 768px) {
+  .menuIcon { display: none; }
+} */

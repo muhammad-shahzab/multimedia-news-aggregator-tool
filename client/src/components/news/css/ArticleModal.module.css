@@ -1,0 +1,130 @@
+.modalCard {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--color-bg-secondary);
+  box-shadow: 0 8px 32px var(--color-shadow);
+  border-radius: 16px;
+  max-width: 700px;
+  width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  outline: none;
+  border: 1px solid var(--color-border);
+  z-index: 1300;
+}
+
+/* Scrollable Content */
+.contentWrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  padding-right: 2.5rem;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.contentWrapper::-webkit-scrollbar {
+  display: none;
+}
+
+/* Chips */
+.chips {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.breakingBadge {
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Media */
+.mediaWrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--color-bg-tertiary);
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 12px var(--color-shadow);
+  flex-shrink: 0;
+}
+
+.media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  background-color: var(--color-bg-accent);
+  border-radius: 12px;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* Title */
+.title {
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+  font-size: 1.5rem;
+  line-height: 1.3;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+/* Summary */
+.summary {
+  color: var(--color-text-secondary);
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+/* Meta */
+.meta {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+/* Action Buttons */
+.actionsWrapper {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-bg-secondary);
+  flex-shrink: 0;
+}
+
+.readButton {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+  font-weight: 600;
+  text-transform: none;
+  padding: 0.5rem 1.5rem;
+}
+
+.readButton:hover {
+  background-color: var(--color-primary-hover) !important;
+}

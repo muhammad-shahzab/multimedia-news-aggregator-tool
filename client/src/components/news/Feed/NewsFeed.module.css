@@ -1,0 +1,36 @@
+.newsFeedContainer {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5em;
+  padding-top: 8px;
+  background-color: var(--color-bg-secondary);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px var(--color-shadow);
+  z-index: 999;
+}
+
+.feedWrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Tablet */
+@media (min-width: 600px) {
+  .feedWrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .feedWrapper {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}

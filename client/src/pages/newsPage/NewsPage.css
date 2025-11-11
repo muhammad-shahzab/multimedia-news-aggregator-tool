@@ -1,0 +1,89 @@
+/* ========================================
+   ROOT PAGE
+   ======================================== */
+.news-page {
+  min-height: 100vh;
+  background-color: var(--color-bg-primary);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto', sans-serif;
+  padding-left: 2%;
+  padding-right: 2%;
+  box-sizing: border-box;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.news-header {
+  position: sticky;
+  top: 0;
+  background-color: var(--color-bg-primary);
+  z-index: 1000;
+  padding: 0.5rem 1rem;
+}
+
+/* ========================================
+   SIDEBAR (desktop)
+   ======================================== */
+.news-sidebar {
+  width: 280px;
+  background-color: var(--color-bg-primary);
+  padding: 2rem 0;
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  display: none;               /* hidden on mobile */
+  box-sizing: border-box;
+}
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.news-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Loading spinner */
+.news-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-primary);
+}
+
+/* ========================================
+   GRID LAYOUT
+   ======================================== */
+.news-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 0.25rem;
+  margin-top: 1rem;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (min-width: 768px) {
+  .news-sidebar {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .news-body {
+    grid-template-columns: 1fr;
+  }
+
+  .news-sidebar {
+    display: none;
+  }
+}

@@ -1,0 +1,115 @@
+/* ========================================
+   ROOT & PAGE
+   ======================================== */
+.pageContainer {
+  min-height: 100vh;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.header {
+  background-color: var(--color-bg-secondary) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  box-shadow: var(--color-shadow-sm);
+}
+
+.toolbar { min-height: 64px; padding: 0 1rem; }
+.backButton { color: var(--color-text-primary); }
+.headerContent { display: flex; align-items: center; gap: 0.75rem; }
+.iconContainer { background-color: var(--color-primary); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.headerTitle { font-weight: 700 !important; color: var(--color-text-primary) !important; }
+.headerSpacer { flex: 1; }
+.headerActions { display: flex; gap: 0.5rem; align-items: center; }
+.avatar { width: 36px; height: 36px; font-weight: 600; }
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.mainContent {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.errorAlert {
+  border: 1px solid var(--color-error-light);
+}
+
+/* Cards */
+.settingsCard {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--color-shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settingsCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--color-shadow-md);
+}
+
+.cardContent { padding: 1.5rem; }
+
+/* Section Header */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.sectionIcon {
+  color: var(--color-primary);
+  font-size: 1.5rem;
+}
+
+.sectionTitle {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Divider */
+.divider {
+  margin: 1rem 0;
+  background-color: var(--color-border);
+}
+
+/* Switches */
+.switchLabel {
+  width: 100%;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  color: var(--color-text-primary);
+}
+
+/* Language Chips */
+.languageSection { margin-top: 1rem; }
+.label { color: var(--color-text-secondary); margin-bottom: 0.5rem; }
+.chipGroup { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.langChip { text-transform: uppercase; font-weight: 500; }
+
+/* Helper Text */
+.helperText {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* Danger Button */
+.dangerButton {
+  margin-top: 1rem;
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+.dangerButton:hover {
+  background-color: var(--color-error-light);
+}

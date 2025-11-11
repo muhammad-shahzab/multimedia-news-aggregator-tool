@@ -1,0 +1,46 @@
+:root {
+  /* ===== LIGHT THEME ===== */
+  --color-bg-primary: #f8f9fb; /* Main page background */
+  --color-bg-secondary: #ffffff; /* Content containers / sections */
+  --color-bg-tertiary: #f2f3f7; /* Cards / widget backgrounds */
+  --color-bg-accent: #e9ecf1; /* Alternate sections / side panels */
+
+  --color-text-primary: #1b1c1f; /* Main text color */
+  --color-text-secondary: #4a4b50; /* Subheadings / labels */
+  --color-text-muted: #6c6e73; /* Less important text / metadata */
+
+  --color-primary: #2563eb; /* Buttons / links / highlights */
+  --color-primary-hover: #1d4ed8; /* Hover state for primary elements */
+  --color-accent: #f59e0b; /* Accent color (tags / highlights) */
+  --color-accent-hover: #d97706; /* Accent hover / active state */
+
+  --color-border: #d1d5db; /* Dividers / card borders */
+  --color-shadow: rgba(0, 0, 0, 0.08); /* Light shadows for depth */
+}
+
+[data-theme="dark"] {
+  /* ===== DARK THEME ===== */
+  --color-bg-primary: #0f172a; /* Main background (dark) */
+  --color-bg-secondary: #1e293b; /* Content containers / sections */
+  --color-bg-tertiary: #27364a; /* Cards / widgets */
+  --color-bg-accent: #1a2437; /* Alternate section / sidebar */
+
+  --color-text-primary: #f8f9f9; /* Main readable text */
+  --color-text-secondary: #cbd5e1; /* Subheadings / labels */
+  --color-text-muted: #94a3b8; /* Metadata / timestamps */
+
+  --color-primary: #3b82f6; /* Buttons / active links */
+  --color-primary-hover: #60a5fa; /* Hover state for primary */
+  --color-accent: #fbbf24; /* Accent highlights / tags */
+  --color-accent-hover: #facc15; /* Accent hover / glow */
+
+  --color-border: #334155; /* Dividers / outlines */
+  --color-shadow: rgba(0, 0, 0, 0.4); /* Deep shadow for cards */
+}
+
+
+/* Helper classes – you can delete them if you never use them */
+.bg-primary   { background-color: var(--color-bg-primary); }
+.bg-secondary { background-color: var(--color-bg-secondary); }
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
