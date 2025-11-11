@@ -21,7 +21,7 @@ app.use(cors())
 
 app.use("/api/auth", authRoutes)
 app.use("/api/user", userRoutes)
-app.use("/api", rssRoutes)
+app.use("/api/rssfeed", rssRoutes)
 app.use("/api/bookmarks", bookmarkRoutes)
 app.use("/api/history", historyRoutes)
 app.use('/api/youtube', youtubeRoutes);

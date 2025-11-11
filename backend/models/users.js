@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   preferences: {
     topics: [{ type: String }],
-    favChennel: [{ type: String }],
+    favChannel: [{ type: String }],
     favtags: [{ type: String }],
     regions: [{ type: String }],
     languages: [{ type: String }],

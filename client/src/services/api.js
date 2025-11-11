@@ -45,16 +45,9 @@ export const userAPI = {
 // News API
 // ──────────────────────────────────────────────
 export const newsAPI = {
-  // Personalized feed (home tab)
-  fetchPersonalizedArticles: (page = 1) => api.get(`/rssfeed?page=${page}`),
-
-  // Fetch news by specific channel
-  fetchArticlesByChannel: (channelName, page = 1) =>
-    api.get(`/channels/channel/${encodeURIComponent(channelName)}?page=${page}`),
-
-  // Fetch news by category
-  fetchArticlesByCategory: (categoryId, page = 1) =>
-    api.get(`/rssfeed/category/${encodeURIComponent(categoryId)}?page=${page}`),
+  fetchPersonalizedArticles: () => api.get(`/rssfeed/personalized`),
+  fetchFollowingArticles: () => api.get(`/rssfeed/following`),
+  fetchArticlesLatest: () => api.get(`/rssfeed/latest`),
 };
 
 // ──────────────────────────────────────────────

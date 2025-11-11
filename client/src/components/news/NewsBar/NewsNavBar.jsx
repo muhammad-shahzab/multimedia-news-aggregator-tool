@@ -78,7 +78,9 @@ export default function NewsNavbar({ activeTab, onTabChange, selectedChannel, on
   const scrollRef = useRef(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const tabs = ["Home", "Headlines", "Following"];
+  const tabs = ["Home",
+    //  "Headlines",
+      "Following"];
 
   const scrollLeft = () => scrollRef.current?.scrollBy({ left: -120, behavior: "smooth" });
   const scrollRight = () => scrollRef.current?.scrollBy({ left: 120, behavior: "smooth" });

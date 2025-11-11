@@ -1,21 +1,20 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
-import User from "../models/users.js";
-import { fetchPersonalizedArticles } from "../services/rssService.js";
+import {
+  getPersonalizedArticles,
+  getFollowingArticles,
+  getLatestArticles,
+} from "../controllers/feedController.js";
 
 const router = express.Router();
 
-router.get("/rssfeed", authMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.userId);
-    const preferences = user.preferences;
-    const articles = await fetchPersonalizedArticles(preferences,);
-    res.json(articles); // i will also send categories later
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error fetching RSS news." });
-  }
-});
+// Home tab → Personalized
+router.get("/personalized", authMiddleware, getPersonalizedArticles);
 
+// Following tab → Fav topics
+router.get("/following", authMiddleware, getFollowingArticles);
+
+// Headlines tab → Latest
+router.get("/latest", getLatestArticles);
 
 export default router;

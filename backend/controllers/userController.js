@@ -64,7 +64,7 @@ export const toggleFavChannel = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    let favChannels = user.preferences.favChennel || [];
+    let favChannels = user.preferences.favChannel || [];
 
     if (favChannels.includes(channel)) {
       favChannels = favChannels.filter((c) => c !== channel);
@@ -72,7 +72,7 @@ export const toggleFavChannel = async (req, res) => {
       favChannels.push(channel);
     }
 
-    user.preferences.favChennel = favChannels;
+    user.preferences.favChannel = favChannels;
     await user.save();
 
     // Send boolean instead of array
@@ -94,7 +94,7 @@ export const isFavChannel = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const fav = (user.preferences.favChennel || []).includes(channel);
+    const fav = (user.preferences.favChannel || []).includes(channel);
     res.status(200).json({ fav });
   } catch (err) {
     console.error("isFavChannel error:", err);

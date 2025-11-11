@@ -104,7 +104,7 @@ const NewsFeed = ({
   useEffect(() => {
     if (!newsArticles) return;
     // Take the first 50 articles as a temporary subset
-    const initialArticles = newsArticles.slice(0, 50);
+const initialArticles = newsArticles || [];
     setVisibleList(initialArticles);
 
   }, [newsArticles])

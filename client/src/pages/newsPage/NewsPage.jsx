@@ -68,21 +68,46 @@ const NewsPage = () => {
   // ──────────────────────────────────────────────
   // Dedicated Tab Fetch Function
   // ──────────────────────────────────────────────
-  const fetchTabArticles = async (tabName, pageNum = 1) => {
+  const fetchTabArticles = async (tabName) => {
     try {
-      setLoading(true);
+      setLoadingArticles(true);
       let response;
-      console.log(`🧭 Fetching tab news: ${tabName} (page ${pageNum})`);
-      response = await newsAPI.fetchArticlesByTab(tabName, pageNum);
+      if (tabName === "Following") {
+        console.log("Fetching personalized articles for Following tab");
+        response = await newsAPI.fetchFollowingArticles();
+        // Set articles
+        setArticles(response.data.articles || []);
+        setSelectedCategory(null);
 
-      if (pageNum === 1) setArticles(response.data.data || []);
-      else setArticles((prev) => [...prev, ...(response.data.data || [])]);
+        // Transform favTopics strings into category objects for Sidebar
+        const followedCategories = response.data.favTopics || [];
+        const mappedCategories = followedCategories.map((topic) => ({
+          id: topic.toLowerCase().replace(/\s+/g, "-"), // unique id
+          label: topic, // display label
+        }));
 
+        // Set categories in state
+        setCategories(mappedCategories);
+      }
+      else if (tabName === "Home") {
+        console.log("Fetching personalized articles for Home tab");
+        response = await newsAPI.fetchPersonalizedArticles();
+        console.log("Response data:", response.data); // this will log the array
+        setArticles(response.data.data || [])
+      }
+      else if (tabName === "Headlines") {
+        console.log(`Fetching articles for headline tab`);
+        response = await newsAPI.fetchArticlesLatest();
+        setArticles(response.data.data || []);
+      }
+      else {
+        setError("Failed to fetch news");
+      }
     } catch (err) {
       console.error("❌ Error fetching news:", err);
       setError("Failed to fetch news");
     } finally {
-      setLoading(false);
+      setLoadingArticles(false);
     }
   };
 
@@ -130,23 +155,22 @@ const NewsPage = () => {
     setSelectedChannel(channelName); // optional: store in state
     setActiveTab(null); // exit tab mode when a channel is selected
     setSelectedCategory(null);
-     processChannelCategories(channelName);
-   
+    processChannelCategories(channelName);
+
     console.log("Processed categories for channel:", channelName);
     console.log("Categories set to:", categories);
 
     fetchChannelArticles(channelName);
   };
 
-  const handleTabChangeFromFeed = async (tabName) => {
+  const handleTabChangeFromFeed = (tabName) => {
     console.log("Parent knows active tab:", tabName);
     setActiveTab(tabName);
     setSelectedChannel(null); // exit channel mode
     setCategories([...defaultCategories]);
     setSelectedCategory(null); // Reset selected category
 
-    setPage(1);
-    // await fetchTabArticles(tabName, 1); // fetch articles for the tab
+    fetchTabArticles(tabName); // fetch articles for the tab
   };
 
 
@@ -186,6 +210,10 @@ const NewsPage = () => {
       console.error("❌ Error fetching channels:", err);
     }
   };
+
+
+
+
 
   const fetchBookmarks = async () => {
     try {
@@ -275,19 +303,19 @@ const NewsPage = () => {
               </div>
             }
           >
-            
-              <NewsFeed
-                selectedCategory={selectedCategory}
-                newsArticles={articles}
-                loading={loadingArticles}
-                bookmarkedArticles={bookmarkedArticles}
-                handleBookmark={handleBookmark}
-                handleReadArticle={handleReadArticle}
-                formatTimeAgo={formatTimeAgo}
-                onTabChange={handleTabChangeFromFeed}
-                onChannelChange={handleSelectedChannelChange}
-              />
-           
+
+            <NewsFeed
+              selectedCategory={selectedCategory}
+              newsArticles={articles}
+              loading={loadingArticles}
+              bookmarkedArticles={bookmarkedArticles}
+              handleBookmark={handleBookmark}
+              handleReadArticle={handleReadArticle}
+              formatTimeAgo={formatTimeAgo}
+              onTabChange={handleTabChangeFromFeed}
+              onChannelChange={handleSelectedChannelChange}
+            />
+
           </Suspense>
         </main>
       </div>
