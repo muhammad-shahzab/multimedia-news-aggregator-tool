@@ -63,6 +63,7 @@ export const channelsAPI = {
 // ──────────────────────────────────────────────
 export const bookmarksAPI = {
   getBookmarks: () => api.get("/bookmarks"),
+  getBookmarkedArticles: () => api.get("/bookmarks/articles"),
   addBookmark: (articleData) => api.post("/bookmarks", articleData),
   removeBookmark: (bookmarkId) => api.delete(`/bookmarks/${bookmarkId}`),
 };

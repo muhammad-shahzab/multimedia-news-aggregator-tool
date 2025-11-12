@@ -177,7 +177,7 @@ import {
 } from "@mui/icons-material";
 import styles from "./css/ArticleCard.module.css";
 import ArticleModal from "./ArticleModal";
-
+import { bookmarksAPI } from "../../services/api";
 const isValidUrl = (url) => {
   try {
     new URL(url);
@@ -190,13 +190,13 @@ const isValidUrl = (url) => {
 const ArticleCard = ({
   article,
   bookmarkedArticles,
-  handleBookmark,
+  //  handleBookmark,
   handleReadArticle,
   formatTimeAgo,
 }) => {
   const videoRef = useRef(null);
   const [modalOpen, setModalOpen] = useState(false);
-
+  const [isBookmarked, setIsBookmarked] = useState(bookmarkedArticles.has(article._id));
   useEffect(() => {
     let hls;
     if (article.isVideo && isValidUrl(article.mediaUrl)) {
@@ -214,11 +214,36 @@ const ArticleCard = ({
     };
   }, [article.mediaUrl, article.isVideo]);
 
-  const isBookmarked = bookmarkedArticles.has(article._id);
   const timeAgo = formatTimeAgo(article.publishedAt);
   const isBreaking = timeAgo === "Just now";
   const showVideo = article.isVideo && isValidUrl(article.mediaUrl);
   const showImage = isValidUrl(article.image) && !showVideo;
+
+  const handleBookmark = async () => {
+  try {
+    if (isBookmarked) {
+      // Find the bookmark document ID for this article
+      const { data } = await bookmarksAPI.getBookmarks();
+      const bm = data.find((b) => b.articleId === article._id);
+      if (bm) {
+        // Remove the bookmark using the bookmark doc ID
+        await bookmarksAPI.removeBookmark(bm._id);
+        console.log("Bookmark removed for article:", article._id);
+        setIsBookmarked(false);
+      }
+    } else {
+      // Add bookmark: send only articleId
+      await bookmarksAPI.addBookmark({ articleId: article._id });
+      console.log("Bookmark added for article:", article._id);
+      setIsBookmarked(true);
+    }
+  } catch (err) {
+    console.error("❌ Bookmark toggle error:", err);
+  }
+};
+
+
+
 
   return (
     <>
@@ -283,7 +308,7 @@ const ArticleCard = ({
               size="small"
               onClick={(e) => {
                 e.stopPropagation();
-                handleBookmark(article);
+                handleBookmark(); // local toggle
               }}
               color={isBookmarked ? "primary" : "default"}
             >

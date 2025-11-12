@@ -1,6 +1,7 @@
 import express from "express"
 import Bookmark from "../models/Bookmark.js"
 import authMiddleware from "../middleware/authMiddleware.js"
+import {Article} from "../models/Article.js";
 
 const router = express.Router()
 
@@ -17,43 +18,47 @@ router.get("/", authMiddleware, async (req, res) => {
 // Add bookmark
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { articleId, title, url, source, category, image, summary, tags } = req.body
+    const { articleId } = req.body;
+
+    if (!articleId) {
+      return res.status(400).json({ message: "Article ID is required" });
+    }
 
     // Check if already bookmarked
     const existingBookmark = await Bookmark.findOne({
       userId: req.userId,
       articleId,
-    })
+    });
 
     if (existingBookmark) {
-      return res.status(400).json({ message: "Article already bookmarked" })
+      return res.status(400).json({ message: "Article already bookmarked" });
     }
 
+    // Create new bookmark
     const bookmark = new Bookmark({
       userId: req.userId,
       articleId,
-      title,
-      url,
-      source,
-      category,
-      image,
-      summary,
-      tags,
-    })
+    });
 
-    await bookmark.save()
-    res.status(201).json(bookmark)
+    await bookmark.save();
+
+    res.status(201).json({
+      message: "Bookmark added successfully",
+      bookmark,
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message })
+    console.error("❌ Bookmark add error:", err);
+    res.status(500).json({ message: err.message });
   }
-})
+});
+
 
 // Remove bookmark
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     await Bookmark.findOneAndDelete({
       _id: req.params.id,
-      userId: req.userId,
+     
     })
     res.json({ message: "Bookmark removed" })
   } catch (err) {
@@ -61,4 +66,24 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   }
 })
 
+
+
+router.get("/articles", authMiddleware, async (req, res) => {
+  try {
+    // Get all bookmark documents for user
+    const bookmarks = await Bookmark.find({ userId: req.userId });
+console.log("✅ Fetched bookmarks:", bookmarks);
+  
+    // Extract article IDs
+    const articleIds = bookmarks.map((b) => b.articleId);
+
+    // Fetch articles from Article collection
+    const articles = await Article.find({ _id: { $in: articleIds } });
+
+    res.json({ data: articles });
+  } catch (err) {
+    console.error("❌ Error fetching bookmarked articles:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
 export default router

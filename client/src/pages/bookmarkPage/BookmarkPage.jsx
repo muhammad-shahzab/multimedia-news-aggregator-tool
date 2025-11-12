@@ -44,8 +44,8 @@ import { debounce } from "lodash";
 import styles from "./BookmarkPage.module.css";
 
 const BookmarkPage = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
+  // const navigate = useNavigate();
+  // const { user } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("recent");
@@ -68,8 +68,8 @@ const BookmarkPage = () => {
     try {
       setLoading(true);
       setError("");
-      const response = await bookmarksAPI.getBookmarks();
-      setBookmarks(response.data);
+      const response = await bookmarksAPI.getBookmarkedArticles();
+      setBookmarks(response.data.data);
     } catch (err) {
       setError("Failed to load bookmarks. Please try again.");
       console.error(err);
@@ -295,7 +295,7 @@ const BookmarkPage = () => {
                         {b.summary}
                       </Typography>
 
-                      {b.tags?.length > 0 && (
+                      {/* {b.tags?.length > 0 && (
                         <Box className={styles.tagsContainer}>
                           {b.tags.slice(0, 3).map((tag) => (
                             <Chip key={tag} label={tag} size="small" variant="outlined" />
@@ -306,20 +306,20 @@ const BookmarkPage = () => {
                             </Tooltip>
                           )}
                         </Box>
-                      )}
+                      )} */}
 
                       <Box className={styles.articleMeta}>
                         <Box className={styles.metaLeft}>
-                          <span>{b.source || "Unknown"}</span>
+                          <span>{b.channel || "Unknown"}</span>
                           <span>•</span>
-                          <Box className={styles.readTime}>
+                          {/* <Box className={styles.readTime}>
                             <AccessTime fontSize="small" />
                             <span>{estimateReadTime(b.summary)} min</span>
-                          </Box>
+                          </Box> */}
                         </Box>
-                        <Typography variant="caption" className={styles.bookmarkedTime}>
+                        {/* <Typography variant="caption" className={styles.bookmarkedTime}>
                           {formatTimeAgo(b.createdAt)}
-                        </Typography>
+                        </Typography> */}
                       </Box>
                     </Box>
                   </Box>

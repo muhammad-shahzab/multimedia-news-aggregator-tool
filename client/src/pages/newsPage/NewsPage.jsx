@@ -231,7 +231,9 @@ const NewsPage = () => {
 
   const handleBookmark = async (article) => {
     try {
+      console.log("Toggling bookmark for article:", article);
       if (bookmarkedArticles.has(article._id)) {
+         console.log("Toggling bookmark for article:", article);
         const { data } = await bookmarksAPI.getBookmarks();
         const bm = data.find((b) => b.articleId === article._id);
         if (bm) await bookmarksAPI.removeBookmark(bm._id);
@@ -309,7 +311,7 @@ const NewsPage = () => {
               newsArticles={articles}
               loading={loadingArticles}
               bookmarkedArticles={bookmarkedArticles}
-              handleBookmark={handleBookmark}
+            //  handleBookmark={handleBookmark}
               handleReadArticle={handleReadArticle}
               formatTimeAgo={formatTimeAgo}
               onTabChange={handleTabChangeFromFeed}

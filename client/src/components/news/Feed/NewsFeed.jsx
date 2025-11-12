@@ -20,7 +20,7 @@ const NewsFeed = ({
   newsArticles,
   loading,
   bookmarkedArticles,
-  handleBookmark,
+ // handleBookmark,
   handleReadArticle,
   formatTimeAgo,
   onTabChange,     // ✅ parent callback for tab
@@ -247,7 +247,7 @@ const initialArticles = newsArticles || [];
                         key={article._id || article.id}
                         article={article}
                         bookmarkedArticles={bookmarkedArticles}
-                        handleBookmark={handleBookmark}
+                    //    handleBookmark={handleBookmark}
                         handleReadArticle={handleReadArticle}
                         formatTimeAgo={formatTimeAgo}
                       />
