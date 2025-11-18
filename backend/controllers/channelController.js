@@ -1,5 +1,6 @@
 import { Channel } from "../models/Channel.js";
-
+import { Article } from "../models/Article.js";
+import {shuffleAndDeduplicateArticles} from "../services/utils/shuffleAndDeduplicate.js";
 
 export const getAllChannels = async (req, res) => {
   try {
@@ -12,8 +13,7 @@ export const getAllChannels = async (req, res) => {
   }
 };
 
-import { Article } from "../models/Article.js";
-import {shuffleAndDeduplicateArticles} from "../services/utils/shuffleAndDeduplicate.js";
+
 
 
 

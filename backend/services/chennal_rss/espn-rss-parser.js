@@ -31,10 +31,11 @@ const parser = new Parser({
   },
 });
 
-// ✅ Extract media (fallback → ESPN logo)
+// ✅ Extract media 
 function extractMedia(item) {
   let imageUrl = null;
 
+  // 1️⃣ Check mediaContent
   if (item.mediaContent?.length) {
     for (const m of item.mediaContent) {
       const url = m.$?.url || m.url;
@@ -46,27 +47,27 @@ function extractMedia(item) {
     }
   }
 
+  // 2️⃣ Check mediaThumbnail
   if (!imageUrl && item.mediaThumbnail?.length) {
     const thumb = item.mediaThumbnail[0];
     if (thumb.$?.url) imageUrl = thumb.$.url;
   }
 
+  // 3️⃣ Check enclosure
   if (!imageUrl && item.enclosure?.url && /image/i.test(item.enclosure.type || "")) {
     imageUrl = item.enclosure.url;
   }
 
+  // 4️⃣ Check first <img> in fullContent
   if (!imageUrl && item.fullContent) {
     const match = item.fullContent.match(/<img[^>]+src=["']([^"']+)["']/i);
     if (match) imageUrl = match[1];
   }
 
-  // ✅ fallback to ESPN logo
-  if (!imageUrl) {
-    imageUrl = ESPN_LOGO;
-  }
-
+  // ✅ No fallback, imageUrl remains null if nothing found
   return { imageUrl };
 }
+
 
 // ✅ Ensure ESPN channel + categories exist
 async function ensureESPNChannel() {

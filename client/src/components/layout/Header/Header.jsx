@@ -1,22 +1,21 @@
+
 // components/layout/Header.jsx
+
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import {
-  AppBar, Toolbar, Typography, TextField, InputAdornment,
-  IconButton, Avatar, Menu, MenuItem, Box
+  AppBar, Toolbar, Typography, 
+  IconButton, Avatar, Menu, MenuItem, Box,
 } from "@mui/material";
 import {
-  Search, Bookmark, AccessTime, AccountCircle,
-  Settings, Logout, Menu as MenuIcon, Home
+   Bookmark, AccessTime, AccountCircle,
+   Logout, Menu as MenuIcon, Home, Announcement, PlayCircleOutline
 } from "@mui/icons-material";
-import { debounce } from "lodash";
 import { useAuth } from "../../../context/AuthContext";
-import { useSearch } from "../../../context/SearchContext";
 import { useDrawer } from "../../../context/DrawerContext";
 import styles from "./Header.module.css";
-
 import logoLight from "./lightLogo.png";
-
+import { AlertsAPI } from "../../../services/api"
 
 
 
@@ -24,13 +23,37 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
-  const { searchQuery, setSearchQuery } = useSearch();
   const { setDrawerOpen } = useDrawer();
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const [alertsAnchorEl, setAlertsAnchorEl] = useState(null);
+  const [alerts, setAlerts] = useState([]);
 
 
-  const isNewsPage = location.pathname === "/news";
+
+
+ const handleAlertsClick = async (event) => {
+  setAlertsAnchorEl(event.currentTarget);
+  try { setAlerts([]);
+    const response = await AlertsAPI.fetchAlerts();
+
+    // Ensure we always have an array
+    const alertsArray = Array.isArray(response.data)
+      ? response.data
+      : Object.values(response.data);
+    const validAlerts = alertsArray;
+    setAlerts(validAlerts);
+  } catch (error) {
+    console.error("Failed to fetch alerts:", error);
+  }
+};
+
+
+  const handleAlertsClose = () => {
+    setAlertsAnchorEl(null);
+  };
+
+
 
   // Page titles (except /news)
   const pageTitles = {
@@ -42,10 +65,6 @@ const Header = () => {
 
   const pageTitle = pageTitles[location.pathname] || null;
 
-  const debouncedSearch = useMemo(
-    () => debounce((v) => setSearchQuery(v), 300),
-    [setSearchQuery]
-  );
 
   const handleMenuClick = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
@@ -63,9 +82,9 @@ const Header = () => {
   const avatarLetter = user?.username?.[0]?.toUpperCase() ?? "U";
 
   return (
-    <AppBar position="sticky"  className={styles.appbar}>
+    <AppBar position="sticky" className={styles.appbar}>
       <Toolbar className={styles.toolbar}>
-        
+
 
         {/* LEFT: Mobile Menu + Logo (Always visible) */}
         <Box className={styles.leftSection}>
@@ -90,25 +109,7 @@ const Header = () => {
           </Typography>
         )}
 
-        {/* Search (ONLY on /news) */}
-        {isNewsPage && (
-          <div className={styles.searchContainer}>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Search news, topics, or sources..."
-              value={searchQuery}
-              onChange={(e) => debouncedSearch(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search className={styles.searchIcon} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
-        )}
+        
 
         {/* RIGHT: Actions + Home Icon */}
         <Box className={styles.rightSection}>
@@ -123,10 +124,52 @@ const Header = () => {
           <IconButton onClick={() => navigate("/history")}>
             <AccessTime className={styles.actionIcon} />
           </IconButton>
+          <IconButton onClick={handleAlertsClick} className={styles.alertIcon}>
+            <Announcement />
+          </IconButton>
           <IconButton onClick={handleMenuClick}>
             <Avatar className={styles.avatar}>{avatarLetter}</Avatar>
           </IconButton>
+
         </Box>
+        <Menu
+          anchorEl={alertsAnchorEl}
+          open={Boolean(alertsAnchorEl)}
+          onClose={handleAlertsClose}
+          PaperProps={{ className: styles.alertsMenuPaper }}
+        >
+          {alerts.length === 0 ? (
+            <MenuItem className={styles.alertsMenuItem} disabled>
+              No alerts
+            </MenuItem>
+          ) : (
+            alerts.map((alert, index) => (
+              <MenuItem
+                key={index}
+                className={styles.alertsMenuItem}
+                onClick={() => {
+                  if (alert.url) {
+                    console.log("Opening alert link:", alert.url);
+                    window.open(alert.url, "_blank", "noopener,noreferrer");
+                  } else {
+                    console.warn("Alert link missing:", alert);
+                  }
+                  handleAlertsClose();
+                }}
+              >
+                <Box display="flex" alignItems="center">
+                  {alert.isVideo && (
+                    <PlayCircleOutline sx={{ mr: 1, color: "#FF5252", fontSize: 18 }} />
+                  )}
+                  <Typography className={styles.alertTitle}>{alert.title}</Typography>
+                </Box>
+              </MenuItem>
+            ))
+          )}
+        </Menu>
+
+
+
 
         {/* Dropdown Menu */}
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
@@ -134,10 +177,10 @@ const Header = () => {
             <AccountCircle sx={{ mr: 1 }} />
             <span className={styles.menuItemText}>Profile</span>
           </MenuItem>
-          <MenuItem onClick={() => handleNavigate("/settings")}>
+          {/* <MenuItem onClick={() => handleNavigate("/settings")}>
             <Settings sx={{ mr: 1 }} />
             <span className={styles.menuItemText}>Settings</span>
-          </MenuItem>
+          </MenuItem> */}
           <MenuItem onClick={handleLogout}>
             <Logout sx={{ mr: 1 }} />
             <span className={styles.menuItemText}>Logout</span>

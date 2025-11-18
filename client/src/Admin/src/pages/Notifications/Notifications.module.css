@@ -1,0 +1,213 @@
+/* Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Header */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 4px 0 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Buttons */
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primaryButton:hover {
+  background: #4338ca;
+}
+
+/* Card */
+.card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f1f1;
+  background: #fafafa;
+}
+
+.headerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #eef2ff;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.cardContent {
+  padding: 16px;
+}
+
+/* Loading / Center */
+.center {
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* Table */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.table thead th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #6b7280;
+  border-bottom: 1px solid #eee;
+}
+
+.table tbody td {
+  padding: 12px 12px;
+  border-bottom: 1px solid #f5f5f5;
+  vertical-align: middle;
+}
+
+.titleCell {
+  font-weight: 600;
+}
+
+/* Actions column */
+.colActions {
+  text-align: right;
+  width: 160px;
+}
+
+.actionGroup {
+  display: inline-flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* Icon buttons */
+.iconButton {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.iconButton:hover {
+  background: #f3f4f6;
+}
+
+/* Badges */
+.typeBadge {
+  display: inline-block;
+  padding: 6px 8px;
+  background: #eef2ff;
+  color: #1e40af;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badgeBlue {
+  display: inline-block;
+  padding: 6px 10px;
+  background: #e6f0ff;
+  color: #1f6feb;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.badgeGreen {
+  display: inline-block;
+  padding: 6px 10px;
+  background: #dff7e6;
+  color: #0b7a35;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.badgeRed {
+  display: inline-block;
+  padding: 6px 10px;
+  background: #fde8e8;
+  color: #b91c1c;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* Empty state */
+.emptyState {
+  text-align: center;
+  padding: 28px 12px;
+  color: #6b7280;
+}
+
+.emptyIcon {
+  opacity: 0.2;
+  color: #6b7280;
+}
+
+/* Error */
+.error {
+  background: #fee2e2;
+  color: #7f1d1d;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Responsive tweaks */
+@media (max-width: 920px) {
+  .colActions {
+    width: 120px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+}

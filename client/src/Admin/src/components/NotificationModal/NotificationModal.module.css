@@ -1,0 +1,117 @@
+/* Backdrop */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 999;
+}
+
+/* Modal box */
+.modal {
+  background: #fff;
+  width: 100%;
+  max-width: 700px;
+  border-radius: 10px;
+  padding: 24px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Header */
+.header {
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.description {
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Inputs */
+.input,
+.select,
+.textarea,
+.datepickerInput {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.textarea {
+  resize: vertical;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* Buttons */
+.cancelButton {
+  padding: 8px 14px;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  background: #d1d5db;
+}
+
+.saveButton {
+  padding: 8px 14px;
+  background: #6366f1;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.saveButton:hover {
+  background: #4f46e5;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

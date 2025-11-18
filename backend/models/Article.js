@@ -18,6 +18,5 @@ const ArticleSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 export const Article = mongoose.model("Article", ArticleSchema);
 

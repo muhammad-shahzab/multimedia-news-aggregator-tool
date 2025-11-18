@@ -1,0 +1,90 @@
+.card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  padding: 16px;
+  width: 100%;
+}
+
+.cardHeader {
+  margin-bottom: 10px;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  font-size: 18px;
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.cardContent {
+  margin-top: 10px;
+}
+
+.scrollArea {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 0;
+  color: #777;
+}
+
+.emptyIcon {
+  font-size: 40px;
+  opacity: 0.3;
+  margin-bottom: 10px;
+}
+
+.activityItem {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.activityItem:last-child {
+  border-bottom: none;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: #eef2ff;
+  color: #4a4ae3;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.activityInfo {
+  flex: 1;
+}
+
+.adminName {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.action,
+.details,
+.time {
+  font-size: 12px;
+  color: #666;
+  margin-top: 3px;
+}

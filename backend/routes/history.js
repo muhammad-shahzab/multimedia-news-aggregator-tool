@@ -7,33 +7,17 @@ const router = express.Router()
 // Get reading history
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const { timeframe } = req.query
-    let dateFilter = {}
-
-    if (timeframe === "today") {
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-      dateFilter = { createdAt: { $gte: today } }
-    } else if (timeframe === "week") {
-      const weekAgo = new Date()
-      weekAgo.setDate(weekAgo.getDate() - 7)
-      dateFilter = { createdAt: { $gte: weekAgo } }
-    } else if (timeframe === "month") {
-      const monthAgo = new Date()
-      monthAgo.setMonth(monthAgo.getMonth() - 1)
-      dateFilter = { createdAt: { $gte: monthAgo } }
-    }
-
+    // Fetch ALL history for the user — no timeframe filtering
     const history = await ReadingHistory.find({
       userId: req.userId,
-      ...dateFilter,
-    }).sort({ createdAt: -1 })
+    }).sort({ createdAt: -1 });
 
-    res.json(history)
+    res.json(history);
   } catch (err) {
-    res.status(500).json({ message: err.message })
+    res.status(500).json({ message: err.message });
   }
-})
+});
+
 
 // Add to reading history
 router.post("/", authMiddleware, async (req, res) => {
@@ -84,22 +68,26 @@ router.get("/stats", authMiddleware, async (req, res) => {
       userId: req.userId,
       readProgress: 100,
     })
-
-    const totalReadTimeResult = await ReadingHistory.aggregate([
-      { $match: { userId: req.userId } },
-      { $group: { _id: null, totalTime: { $sum: "$readTime" } } },
-    ])
-
-    const totalReadTime = totalReadTimeResult[0]?.totalTime || 0
-
     res.json({
       totalArticles,
-      completedArticles,
-      totalReadTime: Math.round(totalReadTime / 60), // Convert to minutes
     })
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
 })
 
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const deleted = await ReadingHistory.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.userId, // ensure only owner can delete
+    });
+
+    if (!deleted) return res.status(404).json({ message: "History item not found" });
+
+    res.json({ message: "History removed" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 export default router

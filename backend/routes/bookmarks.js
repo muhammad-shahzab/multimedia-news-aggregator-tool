@@ -57,7 +57,8 @@ router.post("/", authMiddleware, async (req, res) => {
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     await Bookmark.findOneAndDelete({
-      _id: req.params.id,
+      articleId: req.params.id,
+
      
     })
     res.json({ message: "Bookmark removed" })
@@ -72,8 +73,7 @@ router.get("/articles", authMiddleware, async (req, res) => {
   try {
     // Get all bookmark documents for user
     const bookmarks = await Bookmark.find({ userId: req.userId });
-console.log("✅ Fetched bookmarks:", bookmarks);
-  
+
     // Extract article IDs
     const articleIds = bookmarks.map((b) => b.articleId);
 

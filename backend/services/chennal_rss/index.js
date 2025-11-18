@@ -4,7 +4,6 @@ import { fetchAndSaveCNNFeeds } from "./cnn-rss-parser.js";
 import { fetchAndSaveNYTFeeds } from "./nyt-rss-parser.js";
 import { fetchAndSaveAlJazeeraFeeds } from "./aljazeera-rss-parser.js";
 import { fetchAndSaveGuardianFeeds } from "./guardian-rss-parser.js";
-import { fetchAndSaveDawnFeeds } from "./dawn-rss-parser.js";
 import { fetchAndSaveESPNFeeds } from "./espn-rss-parser.js";
 import { fetchAndSaveGeoFeeds } from "./geo-rss-parser.js";
 import { fetchAndSaveTribuneFeeds } from "./tribune-rss-parser.js";
@@ -16,7 +15,6 @@ export async function fetchAllFeeds() {
   await fetchAndSaveNYTFeeds();
   await fetchAndSaveAlJazeeraFeeds();
   await fetchAndSaveGuardianFeeds();
-  await fetchAndSaveDawnFeeds();
   await fetchAndSaveESPNFeeds();
   await fetchAndSaveGeoFeeds();
   await fetchAndSaveTribuneFeeds();
@@ -25,4 +23,4 @@ export async function fetchAllFeeds() {
 }
 
 // // run directly
-// fetchAllFeeds();
+//  fetchAllFeeds();

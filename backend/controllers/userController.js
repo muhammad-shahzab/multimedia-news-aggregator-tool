@@ -101,3 +101,38 @@ export const isFavChannel = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// -------------------- TAGS --------------------
+
+export const addFavTags = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const tags = req.body;
+    console.log("tags");
+console.log(tags);
+
+    if (!Array.isArray(tags) || tags.length === 0) {
+      return res.status(400).json({ message: "Tags must be a non-empty array." });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (!user.preferences) user.preferences = {};
+    if (!Array.isArray(user.preferences.favtags)) user.preferences.favtags = [];
+
+    tags.forEach(tag => {
+      if (!user.preferences.favtags.includes(tag)) {
+        user.preferences.favtags.push(tag);
+      }
+    });
+
+    await user.save();
+
+    res.json({ message: "Tags added successfully", favtags: user.preferences.favtags });
+  } catch (err) {
+    console.error("❌ addFavTags error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};

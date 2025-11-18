@@ -1,5 +1,6 @@
 
 
+import { useState } from "react"
 import { useRef } from "react";
 import {
   AppBar,
@@ -11,10 +12,10 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { ChevronLeft, ChevronRight,Search, Close } from "@mui/icons-material";
 import { styled } from "@mui/system";
 import styles from "./NewsNavbar.module.css";
-import ChannelLogo from "./logos/ChannelsLogo";
+import {ChannelLogo} from "./logos/ChannelsLogo.js";
 
 const ScrollContainer = styled(Box)(() => ({
   display: "flex",
@@ -47,10 +48,7 @@ export const channels = [
     name: "Al Jazeera English",
     logo: "Al Jazeera",
   },
-  {
-    name: "Dawn",
-    logo: "Dawn",
-  },
+  
   {
     name: "ESPN",
     logo: "ESPN",
@@ -74,7 +72,9 @@ export const channels = [
 ];
 
 
-export default function NewsNavbar({ activeTab, onTabChange, selectedChannel, onChannelSelect }) {
+export default function NewsNavbar({ activeTab, onTabChange, selectedChannel, onChannelSelect , searchQuery,setSearchQuery}) {
+  const [showSearch, setShowSearch] = useState(false); 
+
   const scrollRef = useRef(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -115,6 +115,34 @@ export default function NewsNavbar({ activeTab, onTabChange, selectedChannel, on
               {tab}
             </Button>
           ))}
+
+          {/* Search Icon / Input */}
+<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+  {showSearch ? (
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <input
+        type="text"
+        value={searchQuery}
+        placeholder="Search articles..."
+        onChange={(e) => setSearchQuery(e.target.value)}
+        style={{
+          padding: "4px 8px",
+          borderRadius: "4px",
+          border: "1px solid #ccc",
+          width: "200px",
+        }}
+      />
+      <IconButton size="small" onClick={() => { setShowSearch(false); setSearchQuery(""); }}>
+        <Close />
+      </IconButton>
+    </Box>
+  ) : (
+    <IconButton size="small" onClick={() => setShowSearch(true)}>
+      <Search />
+    </IconButton>
+  )}
+</Box>
+
         </Box>
 
         {/* Channels Slider */}
@@ -140,7 +168,7 @@ export default function NewsNavbar({ activeTab, onTabChange, selectedChannel, on
                   console.log("Channel clicked:", channel.name);
                    onChannelSelect(channel.name)
                 }}
-                className={`${styles.channelItem} ${selectedChannel === channel ? styles.activeChannel : ""}`}
+                className={`${styles.channelItem} ${selectedChannel === channel.name ? styles.activeChannel : ""}`}
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -163,6 +191,8 @@ export default function NewsNavbar({ activeTab, onTabChange, selectedChannel, on
             <ChevronRight fontSize="small" />
           </IconButton>
         </Box>
+
+        
       </Toolbar>
     </AppBar>
   );

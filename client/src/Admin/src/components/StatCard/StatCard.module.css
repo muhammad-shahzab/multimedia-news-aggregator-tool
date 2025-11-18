@@ -1,0 +1,74 @@
+.card {
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e3e3e3;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.cardContent {
+  padding: 20px;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.iconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: rgba(30, 64, 175, 0.1); /* light blue */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mainIcon {
+  width: 24px;
+  height: 24px;
+  color: #1e40af; /* primary color */
+}
+
+.title {
+  font-size: 14px;
+  color: #6b7280; /* grey */
+  margin-bottom: 4px;
+}
+
+.value {
+  font-size: 30px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.trendPositive {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #059669; /* green */
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.trendNegative {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #dc2626; /* red */
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.trendIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.trendLabel {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+}

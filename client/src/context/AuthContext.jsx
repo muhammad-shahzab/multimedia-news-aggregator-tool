@@ -19,14 +19,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"))
 
   useEffect(() => {
-    if (token) {
-      fetchUser()
-    } else {
-      setLoading(false)
-    }
-  }, [token])
-
-  const fetchUser = async () => {
+ const fetchUser = async () => {
     try {
       const response = await userAPI.getProfile()
       setUser(response.data)
@@ -38,6 +31,15 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+    
+    if (token) {
+      fetchUser()
+    } else {
+      setLoading(false)
+    }
+  }, [token])
+
+ 
   const login = async (credentials) => {
     try {
       const response = await authAPI.login(credentials)

@@ -1,7 +1,7 @@
 import express from 'express';
 import authMiddleware from '../middleware/authMiddleware.js';
 import User from '../models/users.js';
-import { toggleFavTopic, isFavTopic, toggleFavChannel, isFavChannel } from '../controllers/userController.js';
+import { toggleFavTopic, isFavTopic, toggleFavChannel, isFavChannel ,addFavTags } from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -39,7 +39,9 @@ router.get("/topic/check", authMiddleware, isFavTopic);
 
 // CHANNELS
 router.post("/channel/toggle", authMiddleware, toggleFavChannel);
-
 router.get("/channel/check", authMiddleware, isFavChannel);
+
+// USER ROUTES
+router.post("/like/add-tags", authMiddleware, addFavTags);
 
 export default router;

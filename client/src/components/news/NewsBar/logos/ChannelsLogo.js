@@ -1,4 +1,3 @@
-import React from "react";
 import bbc from "./bbc-news-logo.png";
 import cnn from "./cnn-logo.png";
 import guardian from "./guardian-logo.png";
@@ -13,7 +12,7 @@ import defaultLogo from "./default.png";
 
 const logos = { bbc, cnn, guardian, aljazeera, dawn, espn, geo, nyt, tribune, jang };
 
-const ChannelLogo = ({ channelName, size = 40 }) => {
+export const ChannelLogo = ({ channelName, size = 40 }) => {
   const key = channelName?.toLowerCase()?.replace(/\s+/g, "");
   const logo = logos[key] || defaultLogo;
 
@@ -32,4 +31,24 @@ const ChannelLogo = ({ channelName, size = 40 }) => {
   );
 };
 
-export default ChannelLogo;
+
+
+
+// Map channel names to their logos
+const channelLogoMap = {
+  "BBC News": bbc,
+  "CNN": cnn,
+  "The Guardian": guardian,
+  "Al Jazeera English": aljazeera,
+  "ESPN": espn,
+  "Geo News": geo,
+  "The New York Times": nyt,
+  "Tribune": tribune,
+  "Jang": jang,
+};
+
+export const getChannelLogo = (channelName) => {
+  return channelLogoMap[channelName] || defaultLogo;
+};
+
+

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect,  } from "react";
 import {
   Card,
   CardContent,
@@ -9,13 +8,8 @@ import {
   Chip,
   IconButton,
   Button,
-  TextField,
-  InputAdornment,
   Menu,
   MenuItem,
-  Divider,
-  AppBar,
-  Toolbar,
   CircularProgress,
   Alert,
   Dialog,
@@ -24,34 +18,19 @@ import {
   DialogContentText,
   DialogTitle,
   Box,
-  Avatar,
-  Tooltip,
 } from "@mui/material";
 import {
-  Search,
-  Sort,
   Share,
-  Delete,
   BookmarkRemove,
-  AccessTime,
   MoreVert,
-  ArrowBack,
-  Public,
 } from "@mui/icons-material";
-import { useAuth } from "../../context/AuthContext";
 import { bookmarksAPI } from "../../services/api";
-import { debounce } from "lodash";
 import styles from "./BookmarkPage.module.css";
 
 const BookmarkPage = () => {
-  // const navigate = useNavigate();
-  // const { user } = useAuth();
+ 
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("recent");
-  const [filterCategory, setFilterCategory] = useState("all");
   const [anchorEl, setAnchorEl] = useState(null);
-  const [sortAnchorEl, setSortAnchorEl] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -79,10 +58,7 @@ const BookmarkPage = () => {
   };
 
   // === CATEGORIES ===
-  const categories = useMemo(() => {
-    const cats = new Set(bookmarks.map(b => b.category).filter(Boolean));
-    return ["all", ...Array.from(cats)];
-  }, [bookmarks]);
+
 
   // === MENU HANDLERS ===
   const handleMenuClick = (e, article) => {
@@ -104,7 +80,9 @@ const BookmarkPage = () => {
   const handleRemoveBookmark = async () => {
     if (!bookmarkToRemove) return;
     try {
+       console.log(bookmarkToRemove)
       await bookmarksAPI.removeBookmark(bookmarkToRemove);
+     
       setBookmarks(prev => prev.filter(b => b._id !== bookmarkToRemove));
     } catch (err) {
       console.error(err);
@@ -122,45 +100,6 @@ const BookmarkPage = () => {
       alert("Link copied!");
     }
     handleMenuClose();
-  };
-
-  // === SEARCH DEBOUNCE ===
-  const debouncedSearch = useCallback(debounce(setSearchQuery, 300), []);
-
-  // === FILTER & SORT ===
-  const filteredBookmarks = useMemo(() => {
-    return bookmarks.filter(b => {
-      const matchesSearch =
-        b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        b.summary?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = filterCategory === "all" || b.category === filterCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [bookmarks, searchQuery, filterCategory]);
-
-  const sortedBookmarks = useMemo(() => {
-    return [...filteredBookmarks].sort((a, b) => {
-      switch (sortBy) {
-        case "recent": return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case "oldest": return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-        case "title": return a.title.localeCompare(b.title);
-        default: return 0;
-      }
-    });
-  }, [filteredBookmarks, sortBy]);
-
-  // === UTILS ===
-  const formatTimeAgo = (date) => {
-    const diff = Date.now() - new Date(date).getTime();
-    const hours = Math.floor(diff / 3600000);
-    if (hours < 1) return "Just now";
-    if (hours < 24) return `${hours}h ago`;
-    return `${Math.floor(hours / 24)}d ago`;
-  };
-
-  const estimateReadTime = (text) => {
-    const words = text?.split(/\s+/).length || 0;
-    return Math.max(1, Math.ceil(words / 200));
   };
 
   // === RENDER ===
@@ -196,62 +135,18 @@ const BookmarkPage = () => {
           </Typography>
         </Box>
 
-        {/* === SEARCH & FILTER === */}
-        <Card className={styles.filterCard}>
-          <CardContent className={styles.filterCardContent}>
-            <Box className={styles.filterBar}>
-              <TextField
-                fullWidth
-                placeholder="Search in titles & summaries..."
-                onChange={(e) => debouncedSearch(e.target.value)}
-                InputProps={{
-                  startAdornment: <InputAdornment position="start"><Search /></InputAdornment>,
-                }}
-                className={styles.searchField}
-              />
-
-              <Button
-                variant="outlined"
-                startIcon={<Sort />}
-                onClick={(e) => setSortAnchorEl(e.currentTarget)}
-                className={styles.sortButton}
-              >
-                Sort: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
-              </Button>
-            </Box>
-
-            <Box className={styles.categoryChips}>
-              {categories.map(cat => (
-                <Chip
-                  key={cat}
-                  label={cat === "all" ? "All" : cat}
-                  onClick={() => setFilterCategory(cat)}
-                  color={filterCategory === cat ? "primary" : "default"}
-                  variant={filterCategory === cat ? "filled" : "outlined"}
-                  className={styles.chip}
-                />
-              ))}
-            </Box>
-          </CardContent>
-        </Card>
-
         {/* === EMPTY STATE === */}
-        {sortedBookmarks.length === 0 ? (
+        {bookmarks.length === 0 ? (
           <Card className={styles.emptyCard}>
             <CardContent className={styles.emptyCardContent}>
               <Typography variant="h6" className={styles.emptyTitle}>
                 No bookmarks found
               </Typography>
-              <Typography variant="body2" className={styles.emptyText}>
-                {searchQuery || filterCategory !== "all"
-                  ? "Try adjusting your search or filters"
-                  : "Save articles from the news feed to see them here"}
-              </Typography>
             </CardContent>
           </Card>
         ) : (
           <Box className={styles.bookmarksList}>
-            {sortedBookmarks.map((b) => (
+            {bookmarks.map((b) => (
               <Card key={b._id} className={styles.bookmarkCard}>
                 <CardContent className={styles.bookmarkCardContent}>
                   <Box className={styles.bookmarkContent}>
@@ -295,31 +190,14 @@ const BookmarkPage = () => {
                         {b.summary}
                       </Typography>
 
-                      {/* {b.tags?.length > 0 && (
-                        <Box className={styles.tagsContainer}>
-                          {b.tags.slice(0, 3).map((tag) => (
-                            <Chip key={tag} label={tag} size="small" variant="outlined" />
-                          ))}
-                          {b.tags.length > 3 && (
-                            <Tooltip title={b.tags.slice(3).join(", ")}>
-                              <Chip label={`+${b.tags.length - 3}`} size="small" />
-                            </Tooltip>
-                          )}
-                        </Box>
-                      )} */}
 
                       <Box className={styles.articleMeta}>
                         <Box className={styles.metaLeft}>
                           <span>{b.channel || "Unknown"}</span>
                           <span>•</span>
-                          {/* <Box className={styles.readTime}>
-                            <AccessTime fontSize="small" />
-                            <span>{estimateReadTime(b.summary)} min</span>
-                          </Box> */}
+                         
                         </Box>
-                        {/* <Typography variant="caption" className={styles.bookmarkedTime}>
-                          {formatTimeAgo(b.createdAt)}
-                        </Typography> */}
+                     
                       </Box>
                     </Box>
                   </Box>
@@ -339,13 +217,7 @@ const BookmarkPage = () => {
           </MenuItem>
         </Menu>
 
-        <Menu anchorEl={sortAnchorEl} open={Boolean(sortAnchorEl)} onClose={() => setSortAnchorEl(null)}>
-          {["recent", "oldest", "title"].map(opt => (
-            <MenuItem key={opt} onClick={() => { setSortBy(opt); setSortAnchorEl(null); }}>
-              {opt.charAt(0).toUpperCase() + opt.slice(1)}
-            </MenuItem>
-          ))}
-        </Menu>
+      
 
         {/* === CONFIRM DIALOG === */}
         <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>

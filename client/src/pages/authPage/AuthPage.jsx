@@ -55,15 +55,22 @@ const AuthPage = () => {
   }
 
   const handleLogin = async (credentials) => {
-    setLoading(true)
-    const result = await login(credentials)
-    if (result.success) {
-      navigate("/news")
+  setLoading(true)
+  const result = await login(credentials)
+
+  if (result.success) {
+    if (result.role === "admin") {
+      navigate("/admin/dashboard")
     } else {
-      setError(result.error || "Login failed. Try again.")
+      navigate("/news")
     }
-    setLoading(false)
+  } else {
+    setError(result.error || "Login failed. Try again.")
   }
+
+  setLoading(false)
+}
+
 
   const handleRegister = async (e) => {
     e.preventDefault()
@@ -116,7 +123,7 @@ return (
       Your browser does not support the video tag.
     </video>
 
-    {/*  Add a translucent overlay to darken the background */}
+     {/* Add a translucent overlay to darken the background */}
     <div className="auth-overlay"></div>
 
     {/* login container */}

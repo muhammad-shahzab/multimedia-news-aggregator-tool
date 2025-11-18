@@ -1,50 +1,73 @@
 import { Article } from "../models/Article.js";
-import { shuffleAndDeduplicateArticles } from "./utils/shuffleAndDeduplicate.js";
-import { filterValidMediaArticles } from "./utils/filterValidMediaArticles.js";
 
 export async function fetchPersonalizedArticles(preferences) {
   try {
-    const { favtags = [], topics = [] } = preferences;
+    const { topics = [], favChannel = [], favtags = [] } = preferences;
 
-    // Check if preferences are empty
-    if (!topics.length && !favtags.length) {
-      console.log("No topics or tags provided, returning empty array.");
-      throw new Error("No topics or tags provided in preferences.");
-    }
+    // If user has no preferences → fallback to general feed
+    const hasPreferences = topics.length || favChannel.length || favtags.length;
 
-    // Build simplified query
-    const query = {
-      $or: [
-        ...(topics.length > 0 ? [{ category: { $in: topics } }] : []),
-        ...(favtags.length > 0 ? [{ tags: { $in: favtags } }] : []),
-      ],
-    };
+    const pipeline = [
+      {
+        $facet: {
+          byTopics: topics.length
+            ? [
+                { $match: { category: { $in: topics } } },
+                { $sample: { size: topics.length * 5 } }, // 5 each topic
+              ]
+            : [],
 
-    // If no conditions, return empty array
-    if (query.$or.length === 0) {
-      console.log("No valid query conditions, returning empty array.");
-      return [];
-    }
+          byChannels: favChannel.length
+            ? [
+                { $match: { channel: { $in: favChannel } } },
+                { $sample: { size: favChannel.length * 5 } }, // 5 each channel
+              ]
+            : [],
 
-    // ✅ Fetch matching articles randomly using $sample
-    const articles = await Article.aggregate([
-      { $match: query },
-      { $sample: { size: 200 } }, // randomly pick 200 docs
-    ]);
+          byTags: favtags.length
+            ? [
+                { $match: { tags: { $in: favtags } } },
+                { $sample: { size: favtags.length * 5 } }, // 5 each tag
+              ]
+            : [],
 
+          // fallback general feed (articles or videos)
+          fallback: hasPreferences
+            ? [
+                { $match: {} },
+                { $sample: { size: 50 } }
+              ]
+            : [
+                // first time user → give mixed feed
+                { $match: {} },
+                { $sample: { size: 80 } }
+              ],
+        },
+      },
 
-    // Filter articles with valid title, summary, and media
-    const validArticles = filterValidMediaArticles(articles);
+      // merge all arrays into one
+      {
+        $project: {
+          all: {
+            $setUnion: ["$byTopics", "$byChannels", "$byTags", "$fallback"],
+          },
+        },
+      },
 
-    // Shuffle and deduplicate articles (extra randomness + cleanup)
-    const finalArticles = shuffleAndDeduplicateArticles(validArticles);
-    console.log(
-      `Articles after shuffling and deduplication: ${finalArticles.length}`
-    );
+      // Flatten the merged array
+      { $unwind: "$all" },
 
-    return finalArticles;
-  } catch (error) {
-    console.error("Error fetching personalized articles:", error.message);
+      // Re-shuffle
+      { $sample: { size: 60 } }, // pick final 60 max
+
+      // Final output
+      { $replaceRoot: { newRoot: "$all" } },
+    ];
+
+    const result = await Article.aggregate(pipeline);
+    return result;
+  } catch (err) {
+    console.error("Error fetching personalized:", err);
     return [];
   }
 }

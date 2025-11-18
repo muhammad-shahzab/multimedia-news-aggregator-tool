@@ -6,12 +6,10 @@ import {
   Menu,
   MenuItem,
   CircularProgress,
-  useTheme,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { userAPI } from "../../../services/api";
 import ArticleCard from "../ArticleCard";
-import YouTubeFeed from "../YouTubeFeed";
 import styles from "./NewsFeed.module.css";
 import NewsNavbar from "../NewsBar/NewsNavBar";
 
@@ -20,40 +18,35 @@ const NewsFeed = ({
   newsArticles,
   loading,
   bookmarkedArticles,
- // handleBookmark,
+  // handleBookmark,
   handleReadArticle,
   formatTimeAgo,
-  onTabChange,     // ✅ parent callback for tab
+  onTabChange,     //  parent callback for tab
   onChannelChange,
 }) => {
-  const theme = useTheme();
 
   // ──────────────────────────────
   // Local States
   // ──────────────────────────────
   const [activeTab, setActiveTab] = useState("Home");
-  const [activeFilter, setActiveFilter] = useState("Articles");
+  const [activeFilter, setActiveFilter] = useState("All");
   const [filterAnchor, setFilterAnchor] = useState(null);
-
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [isFollowingChannel, setIsFollowingChannel] = useState(false);
-
   const [visibleList, setVisibleList] = useState(newsArticles);
+  const [searchQuery, setSearchQuery] = useState("");
+
 
   // ──────────────────────────────
   // Handlers
   // ──────────────────────────────
   const handleFilterClick = (e) => setFilterAnchor(e.currentTarget);
 
-  const handleFilterSelect = (filter) => {
-    setActiveFilter(filter);
-    setFilterAnchor(null);
-    console.log("🧩 Filter changed to:", filter);
-  };
 
   // === Channel Selection ===
   const handleChannelSelect = async (channelName) => {
     setSelectedChannel(channelName);
+       setActiveFilter("All")
     setActiveTab(null);
     if (onChannelChange) onChannelChange(channelName);
     try {
@@ -61,16 +54,11 @@ const NewsFeed = ({
 
       if (data && typeof data.fav === "boolean") {
         setIsFollowingChannel(data.fav);
-        console.log(
-          data.fav
-            ? `⭐ ${channelName} is already being followed`
-            : `👀 ${channelName} is not followed`
-        );
       } else {
-        console.error("❌ Invalid response from backend:", data);
+        console.error("  Invalid response from backend:", data);
       }
     } catch (err) {
-      console.error("❌ Error checking follow status:", err);
+      console.error("  Error checking follow status:", err);
     }
   };
 
@@ -83,7 +71,7 @@ const NewsFeed = ({
       if (data && typeof data.fav === "boolean") {
         setIsFollowingChannel(data.fav);
       } else {
-        console.error("❌ Invalid response from backend:", data);
+        console.error("  Invalid response from backend:", data);
       }
     } catch (err) {
       // revert UI if error
@@ -94,20 +82,19 @@ const NewsFeed = ({
   // === Tab Change ===
   const handleTabChange = (tab) => {
     setSelectedChannel(null);
-    setActiveTab(tab);
+    setVisibleList([])
+    setActiveTab(tab)
+    setActiveFilter("All")
     if (onTabChange) onTabChange(tab);
   };
 
-  // ──────────────────────────────
-  // filters for articles
-  // ──────────────────────────────
   useEffect(() => {
     if (!newsArticles) return;
-    // Take the first 50 articles as a temporary subset
-const initialArticles = newsArticles || [];
+    const initialArticles = newsArticles || [];
     setVisibleList(initialArticles);
 
   }, [newsArticles])
+
 
   useEffect(() => {
     if (!newsArticles) return;
@@ -121,27 +108,48 @@ const initialArticles = newsArticles || [];
 
     setVisibleList(filteredArticles);
   }, [selectedCategory, newsArticles]);
+// 🔎 Filter articles by search
+useEffect(() => {
+  if (!newsArticles) return;
+
+  if (!searchQuery.trim()) {
+    setVisibleList(newsArticles); 
+    return;
+  }
+
+  const lower = searchQuery.toLowerCase();
+
+  const filtered = newsArticles.filter((article) =>
+    article.title?.toLowerCase().includes(lower) ||
+    article.description?.toLowerCase().includes(lower) ||
+    article.channel?.toLowerCase().includes(lower)
+  );
+
+  setVisibleList(filtered);
+}, [searchQuery, newsArticles]);
 
 
-  // === Pagination ===
-  // const handleLoadMore = async () => {
-  //   setLoadingMore(true);
-  //   try {
-  //     await fetchMoreArticles();
-  //     setVisibleArticles((prev) => prev + 30);
-  //   } catch (err) {
-  //     console.error("Error loading more articles:", err);
-  //   } finally {
-  //     setLoadingMore(false);
-  //   }
-  // };
+  const handleFilterSelect = (filter) => {
+  setActiveFilter(filter);
+  setFilterAnchor(null);
 
-  // ──────────────────────────────
-  // Derived UI Logic
-  // ──────────────────────────────
-  const shouldShowVideos = activeFilter === "Videos" || activeFilter === "All";
-  const shouldShowArticles =
-    activeFilter === "Articles" || activeFilter === "All";
+
+  if (filter === "Articles") {
+    const articlesOnly = newsArticles.filter(
+      (article) => article.isVideo === false
+    );
+    setVisibleList(articlesOnly);
+  } 
+  else if (filter === "Videos") {
+    const videosOnly = newsArticles.filter(
+      (article) => article.isVideo === true
+    );
+    setVisibleList(videosOnly);
+  } 
+  else {
+    setVisibleList(newsArticles);
+  }
+};
 
 
 
@@ -155,6 +163,8 @@ const initialArticles = newsArticles || [];
         onTabChange={handleTabChange}
         selectedChannel={selectedChannel}
         onChannelSelect={handleChannelSelect}
+         searchQuery={searchQuery}  
+        setSearchQuery={setSearchQuery}
       />
 
       <Box
@@ -215,74 +225,36 @@ const initialArticles = newsArticles || [];
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
           <CircularProgress />
         </Box>
-      ) : (
-        <>
-          {shouldShowVideos && !shouldShowArticles ? (
-            <YouTubeFeed category={selectedCategory} />
-          ) : (
-            <>
-              {shouldShowVideos && (
-                <Box mb={4}>
-                  <Typography variant="h6" mb={2}>
-                    Video Highlights
-                  </Typography>
-                  <YouTubeFeed category={selectedCategory} />
-                </Box>
-              )}
-
-              {shouldShowArticles && (
-                <div className={styles.feedWrapper}>
-                  {visibleList.length == null ? (
-                    <Typography
-                      variant="body1"
-                      color="text.secondary"
-                      textAlign="center"
-                      mt={4}
-                    >
-                      No articles available for this selection.
-                    </Typography>
-                  ) : (
-                    visibleList.map((article) => (
-                      <ArticleCard
-                        key={article._id || article.id}
-                        article={article}
-                        bookmarkedArticles={bookmarkedArticles}
+      ) :
+        (
+          <>
+            <div className={styles.feedWrapper}>
+              {visibleList.length ===0 ? (
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  textAlign="center"
+                  mt={4}
+                >
+                  {/* No articles available for this selection. */}
+                </Typography>
+              ) : (
+                visibleList.map((article) => (
+                  <ArticleCard
+                    key={article._id || article.id}
+                    article={article}
+                    bookmarkedArticles={bookmarkedArticles}
                     //    handleBookmark={handleBookmark}
-                        handleReadArticle={handleReadArticle}
-                        formatTimeAgo={formatTimeAgo}
-                      />
-                    ))
-                  )}
-                </div>
+                    handleReadArticle={handleReadArticle}
+                    formatTimeAgo={formatTimeAgo}
+                  />
+                ))
               )}
-            </>
-          )}
+            </div>
+          </>
+        )}
 
 
-        </>
-      )}
-
-
-
-
-      {/* {newsArticles.length > visibleArticles && (
-        <Box mt={4} display="flex" justifyContent="center">
-          <Button
-            variant="outlined"
-            size="large"
-            sx={{
-              color: "text.primary",
-              borderColor: "divider",
-              "&:hover": { borderColor: "primary.main" },
-              minWidth: 160,
-            }}
-            onClick={handleLoadMore}
-            disabled={loadingMore}
-          >
-            {loadingMore ? <CircularProgress size={24} /> : "Load More Articles"}
-          </Button>
-        </Box>
-      )} */}
     </Box>
   );
 };
